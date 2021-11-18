@@ -1,0 +1,10 @@
+bulb
+cans
+glassbottle
+newspaper
+toothbrush
+carton
+plasticbottle
+rag
+tabletcapsule
+Xlight
