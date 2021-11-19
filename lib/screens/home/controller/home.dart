@@ -7,7 +7,6 @@ import 'package:tflite/tflite.dart';
 class HomeController extends GetxController {
   var result = ''.obs;
   ImagePicker? imagePicker;
-  File? imageFile;
 
   final _picker = ImagePicker();
   final imagePath = ''.obs;
