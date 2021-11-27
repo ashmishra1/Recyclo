@@ -1,14 +1,19 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:recyclo/screens/home/controller/home.dart';
+import 'package:recyclo/screens/account/controller/account.dart';
+
+import 'package:recyclo/utils/shared/ui_helpers.dart';
+import 'package:recyclo/utils/widgets/box_button.dart';
 import 'package:recyclo/utils/widgets/box_text.dart';
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+class AccountScreen extends StatelessWidget {
+  const AccountScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final HomeController homeController = Get.put(HomeController());
+    final AccountController homeController = Get.put(AccountController());
     return Scaffold(
         appBar: AppBar(
           title: const BoxText.headingThree(
@@ -18,7 +23,7 @@ class HomeScreen extends StatelessWidget {
           elevation: 0.0,
         ),
         body: Center(
-          child: BoxText.headingOne('Home'),
+          child: BoxText.headingOne('Account'),
         ));
   }
 }

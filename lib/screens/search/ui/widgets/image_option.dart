@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:recyclo/screens/home/controller/home.dart';
+import 'package:recyclo/screens/search/controller/search.dart';
 import 'package:recyclo/utils/shared/ui_helpers.dart';
 import 'package:recyclo/utils/widgets/box_text.dart';
 
@@ -12,7 +12,7 @@ class ImageOptions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(HomeController());
+    final controller = Get.put(SearchController());
     return Container(
       height: screenHeightPercentage(context, percentage: 0.2),
       padding: const EdgeInsets.only(top: 50),

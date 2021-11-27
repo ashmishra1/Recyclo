@@ -1,8 +1,15 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:recyclo/screens/home/ui/home.dart';
+import 'package:recyclo/screens/login/ui/login.dart';
+import 'package:recyclo/screens/navbar/ui/navbar.dart';
+import 'package:recyclo/screens/phone_auth/ui/phone_auth.dart';
 
-void main() async {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 
@@ -13,10 +20,18 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       title: 'Recyclo',
+      debugShowCheckedModeBanner: false,
+      defaultTransition: Transition.cupertino,
       theme: ThemeData(
-        primarySwatch: Colors.amber,
+        textTheme: GoogleFonts.quicksandTextTheme(),
+        pageTransitionsTheme: const PageTransitionsTheme(builders: {
+          TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+          TargetPlatform.android: CupertinoPageTransitionsBuilder(),
+        }),
+        colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.lightGreen)
+            .copyWith(secondary: Colors.grey),
       ),
-      home: HomeScreen(),
+      home: const PhoneAuthScreen(),
     );
   }
 }

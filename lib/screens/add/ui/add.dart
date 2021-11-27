@@ -3,8 +3,8 @@ import 'package:get/get.dart';
 import 'package:recyclo/screens/home/controller/home.dart';
 import 'package:recyclo/utils/widgets/box_text.dart';
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+class AddScreen extends StatelessWidget {
+  const AddScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -12,13 +12,13 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(
           title: const BoxText.headingThree(
-            'Recyclo',
+            'Add',
           ),
           backgroundColor: Colors.white,
           elevation: 0.0,
         ),
         body: Center(
-          child: BoxText.headingOne('Home'),
+          child: BoxText.headingOne('Add'),
         ));
   }
 }
