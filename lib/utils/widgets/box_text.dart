@@ -47,6 +47,11 @@ class BoxText extends StatelessWidget {
       : style = inkedTextStyle,
         alignment = align,
         super(key: key);
+  const BoxText.blackText(this.text,
+      {Key? key, TextAlign align = TextAlign.start})
+      : style = blackTextStytle,
+        alignment = align,
+        super(key: key);
 
   BoxText.body(this.text,
       {Key? key,

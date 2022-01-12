@@ -3,13 +3,14 @@ import 'package:image_picker/image_picker.dart';
 import 'package:tflite/tflite.dart';
 
 class SearchController extends GetxController {
-  var result = ''.obs;
+  var result = [].obs;
   ImagePicker? imagePicker;
 
   final _picker = ImagePicker();
   final imagePath = ''.obs;
   final imageUrl = ''.obs;
   var isLoading = false.obs;
+  var searchImage = false.obs;
 
   void selectImage(ImageSource imageSource) async {
     final _pickedFile = await _picker.pickImage(source: imageSource);
@@ -56,13 +57,27 @@ class SearchController extends GetxController {
       asynch: true,
     );
     print(recognition!.length.toString());
-    result.value = '';
+    //result.add(item) = '';
     update();
-    recognition.forEach((element) {
+    for (var element in recognition) {
       print(element.toString());
       if (element["confidenceInClass"] > 0.50) {
-        result.value += element['detectedClass'] + "\n";
+        result.add(element['detectedClass']);
+        result.value = Set.of(result).toList();
+        //result.value += element['detectedClass'] + "\n";
+        print(result);
       }
-    });
+    }
+  }
+
+  void getKeywords(String keywords) {
+    if (keywords != '') {
+      result.value = keywords.split(",");
+    }
+  }
+
+  void refreshdata() {
+    result.value = [];
+    imagePath.value = '';
   }
 }

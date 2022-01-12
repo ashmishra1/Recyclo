@@ -8,6 +8,7 @@ import 'package:recyclo/screens/fav/ui/fav.dart';
 import 'package:recyclo/screens/home/ui/home.dart';
 import 'package:recyclo/screens/navbar/controller/navbar.dart';
 import 'package:recyclo/screens/search/ui/search.dart';
+import 'package:recyclo/utils/shared/app_colors.dart';
 
 class Navbar extends StatelessWidget {
   const Navbar({Key? key}) : super(key: key);
@@ -78,17 +79,17 @@ List<PersistentBottomNavBarItem> _navBarsItems() {
         size: 23,
       ),
       title: ("Home"),
-      activeColorPrimary: CupertinoColors.activeGreen,
-      inactiveColorPrimary: CupertinoColors.systemGrey,
+      activeColorPrimary: kcPrimaryColor,
+      inactiveColorPrimary: kcMediumGreyColor,
     ),
     PersistentBottomNavBarItem(
       icon: const Icon(
         CupertinoIcons.square_favorites_alt,
         size: 23,
       ),
-      title: ("Trending"),
-      activeColorPrimary: CupertinoColors.activeGreen,
-      inactiveColorPrimary: CupertinoColors.systemGrey,
+      title: ("Explore"),
+      activeColorPrimary: kcPrimaryColor,
+      inactiveColorPrimary: kcMediumGreyColor,
     ),
     PersistentBottomNavBarItem(
       icon: const Icon(
@@ -97,8 +98,8 @@ List<PersistentBottomNavBarItem> _navBarsItems() {
         size: 30,
       ),
       //title: (""),
-      activeColorPrimary: CupertinoColors.activeGreen,
-      inactiveColorPrimary: CupertinoColors.systemGrey,
+      activeColorPrimary: kcPrimaryColor,
+      inactiveColorPrimary: kcMediumGreyColor,
     ),
     PersistentBottomNavBarItem(
       icon: const Icon(
@@ -106,8 +107,8 @@ List<PersistentBottomNavBarItem> _navBarsItems() {
         size: 23,
       ),
       title: ("Search"),
-      activeColorPrimary: CupertinoColors.activeGreen,
-      inactiveColorPrimary: CupertinoColors.systemGrey,
+      activeColorPrimary: kcPrimaryColor,
+      inactiveColorPrimary: kcMediumGreyColor,
     ),
     PersistentBottomNavBarItem(
       icon: const Icon(
@@ -115,8 +116,8 @@ List<PersistentBottomNavBarItem> _navBarsItems() {
         size: 23,
       ),
       title: ("Account"),
-      activeColorPrimary: CupertinoColors.activeGreen,
-      inactiveColorPrimary: CupertinoColors.systemGrey,
+      activeColorPrimary: kcPrimaryColor,
+      inactiveColorPrimary: kcMediumGreyColor,
     ),
   ];
 }

@@ -8,6 +8,7 @@ class BoxInputField extends StatelessWidget {
   final Widget? trailing;
   final bool password;
   final void Function()? trailingTapped;
+  final bool? dark;
 
   final circularBorder = OutlineInputBorder(
     borderRadius: BorderRadius.circular(8),
@@ -21,6 +22,7 @@ class BoxInputField extends StatelessWidget {
     this.trailing,
     this.trailingTapped,
     this.password = false,
+    this.dark = false,
   }) : super(key: key);
 
   @override
@@ -36,10 +38,16 @@ class BoxInputField extends StatelessWidget {
         obscureText: password,
         decoration: InputDecoration(
           hintText: placeholder,
+          hintStyle: TextStyle(
+            color: (dark == false) ? Colors.black45 : Colors.white,
+            fontSize: 18.0,
+          ),
           contentPadding:
-              const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+              const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
           filled: true,
-          fillColor: kcVeryLightGreyColor,
+          fillColor: (dark == false)
+              ? kcVeryLightGreyColor
+              : Colors.black.withOpacity(0.1),
           prefixIcon: leading,
           suffixIcon: trailing != null
               ? GestureDetector(
@@ -54,10 +62,12 @@ class BoxInputField extends StatelessWidget {
             borderSide: const BorderSide(color: Colors.red),
           ),
           focusedBorder: circularBorder.copyWith(
-            borderSide: const BorderSide(color: kcPrimaryColor),
+            borderSide: BorderSide(
+                color: (dark == false) ? kcPrimaryColor : Colors.transparent),
           ),
           enabledBorder: circularBorder.copyWith(
-            borderSide: const BorderSide(color: kcLightGreyColor),
+            borderSide: BorderSide(
+                color: (dark == false) ? kcLightGreyColor : Colors.transparent),
           ),
         ),
       ),
