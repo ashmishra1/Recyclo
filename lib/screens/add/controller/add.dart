@@ -11,7 +11,9 @@ import 'package:http/http.dart' as http;
 class AddController extends GetxController {
   var dropdownValue = 'Tyre'.obs;
   var tags = [].obs;
-  var enableNext = false.obs;
+  var validateCaption = ''.obs;
+  var validateProcedure = ''.obs;
+  var validatePrice = ''.obs;
   File? imageFile;
   File? videoFile;
   File selectedFile = File('assets/image_upload.svg');

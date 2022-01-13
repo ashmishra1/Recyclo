@@ -21,14 +21,6 @@ class AddScreen extends StatelessWidget {
     final AddController addController = Get.put(AddController());
     NetworkHandler networkHandler = NetworkHandler();
 
-    addController.captionController.addListener(() {
-      if (addController.captionController.text == '') {
-        addController.enableNext.value = false;
-      } else {
-        addController.enableNext.value = true;
-      }
-    });
-
     List<String> items = ['Bottle', 'Plank', 'Tyre', 'Coir', 'Card Boards'];
 
     return Scaffold(
@@ -79,7 +71,7 @@ class AddScreen extends StatelessWidget {
                           ),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 20.0,
                 ),
                 Row(
@@ -174,26 +166,31 @@ class AddScreen extends StatelessWidget {
                 const SizedBox(
                   height: 20.0,
                 ),
-                TextField(
-                  controller: addController.captionController,
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(
-                        10.0,
+                Obx(() {
+                  return TextField(
+                    controller: addController.captionController,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(
+                          10.0,
+                        ),
+                        borderSide: const BorderSide(
+                          color: kcPrimaryColor,
+                        ),
                       ),
-                      borderSide: const BorderSide(
-                        color: kcPrimaryColor,
-                      ),
+                      focusColor: kcPrimaryColor,
+                      hintText: 'Write something here',
+                      helperText: 'Keep it short and simple',
+                      labelText: 'Caption',
+                      errorText: addController.validateCaption.value == 'empty'
+                          ? 'Caption Can\'t Be Empty'
+                          : null,
                     ),
-                    focusColor: kcPrimaryColor,
-                    hintText: 'Write something here',
-                    helperText: 'Keep it short and simple',
-                    labelText: 'Caption',
-                  ),
-                  textInputAction: TextInputAction.newline,
-                  keyboardType: TextInputType.multiline,
-                  maxLines: null,
-                ),
+                    textInputAction: TextInputAction.newline,
+                    keyboardType: TextInputType.multiline,
+                    maxLines: null,
+                  );
+                }),
                 const SizedBox(
                   height: 40.0,
                 ),
@@ -350,8 +347,7 @@ class AddScreen extends StatelessWidget {
                           addController.captionController.clear();
 
                           addController.tags.value = [];
-                          networkHandler.newPost(
-                              "/add-post", addController.pickedFile!.path);
+
                           print(addController.pickedFile?.name);
                         },
                         child: Container(
@@ -369,26 +365,42 @@ class AddScreen extends StatelessWidget {
                       ),
                       InkWell(
                         onTap: () {
-                          (addController.enableNext.value == true)
-                              ? (addController.tags.isNotEmpty)
-                                  ? Get.to(
-                                      () => const ProcedureScreen(),
-                                    )
-                                  : ScaffoldMessenger.of(
-                                      context,
-                                    ).showSnackBar(
-                                      const SnackBar(
-                                        content:
-                                            Text("please fill all details"),
-                                      ),
-                                    )
-                              : ScaffoldMessenger.of(
-                                  context,
-                                ).showSnackBar(
-                                  const SnackBar(
-                                    content: Text("Please fill all details"),
-                                  ),
-                                );
+                          if (addController.captionController.text.isEmpty ||
+                              addController.captionController.text == '') {
+                            addController.validateCaption.value = 'empty';
+                          } else {
+                            addController.validateCaption.value = 'filled';
+                          }
+                          if (addController.tags.isNotEmpty &&
+                              addController.validateCaption.value == 'filled' &&
+                              addController.pickedFile?.path != null) {
+                            Get.to(() => const ProcedureScreen());
+                          } else if (addController.tags.isEmpty &&
+                              addController.pickedFile?.path == null) {
+                            ScaffoldMessenger.of(
+                              context,
+                            ).showSnackBar(
+                              const SnackBar(
+                                content: Text("Add Tags and Upload Image"),
+                              ),
+                            );
+                          } else if (addController.tags.isEmpty) {
+                            ScaffoldMessenger.of(
+                              context,
+                            ).showSnackBar(
+                              const SnackBar(
+                                content: Text("Add Tags"),
+                              ),
+                            );
+                          } else if (addController.pickedFile?.path == null) {
+                            ScaffoldMessenger.of(
+                              context,
+                            ).showSnackBar(
+                              const SnackBar(
+                                content: Text("Upload Image"),
+                              ),
+                            );
+                          }
                         },
                         child: Container(
                           margin: const EdgeInsets.all(10.0),

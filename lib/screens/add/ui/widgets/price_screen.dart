@@ -16,6 +16,7 @@ class PriceScreen extends StatelessWidget {
     NetworkHandler networkHandler = NetworkHandler();
     NavbarController navbarController = Get.find();
     AddController addController = Get.find();
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -60,26 +61,30 @@ class PriceScreen extends StatelessWidget {
                     height: 40.0,
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 50.0),
-                    child: TextField(
-                      controller: addController.priceController,
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(
-                            10.0,
+                      padding: const EdgeInsets.symmetric(horizontal: 50.0),
+                      child: Obx(() {
+                        return TextField(
+                          controller: addController.priceController,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(
+                                10.0,
+                              ),
+                              borderSide: const BorderSide(
+                                color: kcPrimaryColor,
+                              ),
+                            ),
+                            hintText: 'in Rs.',
+                            labelText: 'Price',
+                            errorText:
+                                addController.validatePrice.value == 'empty'
+                                    ? 'Price Can\'t Be Empty'
+                                    : null,
                           ),
-                          borderSide: const BorderSide(
-                            color: kcPrimaryColor,
-                          ),
-                        ),
-                        hintText: 'in Rs.',
-                        labelText: 'Price',
-                      ),
-                      textInputAction: TextInputAction.newline,
-                      keyboardType: TextInputType.multiline,
-                      maxLines: null,
-                    ),
-                  ),
+                          keyboardType: TextInputType.number,
+                          maxLines: 1,
+                        );
+                      })),
                 ],
               ),
             ),
@@ -106,32 +111,49 @@ class PriceScreen extends StatelessWidget {
                   ),
                   InkWell(
                     onTap: () async {
-                      Map<String, String> postData = {
-                        "caption": addController.captionController.text,
-                        "procedure": addController.procedureController.text,
-                        "price": addController.priceController.text,
-                      };
-
-                      var response =
-                          await networkHandler.post("/add-post", postData);
-
-                      if (response.statusCode == 200 ||
-                          response.statusCode == 201) {
-                        var imageResponse = await networkHandler.patchImage(
+                      if (addController.priceController.text.isEmpty ||
+                          addController.priceController.text == '') {
+                        addController.validatePrice.value = 'empty';
+                      } else {
+                        addController.validatePrice.value = 'filled';
+                      }
+                      if (addController.validatePrice.value == 'filled') {
+                        var status = networkHandler.newPost(
                           "/add-post",
                           addController.pickedFile!.path,
+                          addController.captionController.text,
+                          addController.tags.join(","),
+                          addController.procedureController.text,
+                          addController.priceController.text,
                         );
-                      }
 
-                      Get.close(2);
-                      Get.snackbar(
-                        'Post Added',
-                        'Your post has been successfully added to your account',
-                      );
-                      addController.priceController.clear();
-                      addController.captionController.clear();
-                      addController.procedureController.clear();
-                      addController.tags.value = [];
+                        if (status.toString() == '200' ||
+                            status.toString() == '201') {
+                          ScaffoldMessenger.of(
+                            context,
+                          ).showSnackBar(
+                            const SnackBar(
+                              content: Text("Cannot add the post"),
+                            ),
+                          );
+                        } else {
+                          ScaffoldMessenger.of(
+                            context,
+                          ).showSnackBar(
+                            const SnackBar(
+                              content: Text("Post Added Successfully"),
+                            ),
+                          );
+                        }
+
+                        Get.close(2);
+
+                        addController.priceController.clear();
+                        addController.captionController.clear();
+                        addController.procedureController.clear();
+                        addController.tags.value = [];
+                        addController.imagePath.value = '';
+                      }
                     },
                     child: Container(
                       margin: const EdgeInsets.all(10.0),

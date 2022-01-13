@@ -1,16 +1,33 @@
+import 'dart:convert';
+
 import 'package:camera/camera.dart';
 import 'package:logger/logger.dart';
 import 'package:http/http.dart' as http;
+import 'package:recyclo/models/post.dart';
 
 class NetworkHandler {
   String baseUrl = "https://recyclo.herokuapp.com/api";
   var log = Logger();
 
-  Future<dynamic> get(String url) async {
+  Future<List> get(String url) async {
     url = formater(url);
     var response = await http.get(Uri.parse(url));
-    log.i(response.body);
-    log.i(response.statusCode);
+
+    if (response.statusCode == 200) {
+      log.i(response.body);
+      log.i(response.statusCode);
+
+      print(jsonDecode(response.body));
+
+      Map map = jsonDecode(response.body);
+      List posts = map["listOfPosts"];
+
+      print(posts.toString());
+
+      return posts;
+    } else {
+      throw Exception('Failed to load posts');
+    }
   }
 
   Future<dynamic> post(String url, Map<String, String> body) async {
@@ -41,12 +58,17 @@ class NetworkHandler {
     return baseUrl + url;
   }
 
-  newPost(String url, String filepath) async {
+  Future<int> newPost(String url, String filepath, String caption, String tags,
+      String procedure, String price) async {
     url = formater(url);
     var request = http.MultipartRequest('POST', Uri.parse(url));
     request.files.add(await http.MultipartFile.fromPath("photo", filepath));
-    request.fields.addAll(
-        {"caption": "new cap", "procedure": "done that", "price": "456"});
+    request.fields.addAll({
+      "caption": caption,
+      "tags": tags,
+      "procedure": procedure,
+      "price": price,
+    });
     print("request: " + request.toString());
     var res = await request.send();
     print("This is response:" + res.toString());

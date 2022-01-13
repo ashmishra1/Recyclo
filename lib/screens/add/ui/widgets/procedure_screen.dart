@@ -13,6 +13,7 @@ class ProcedureScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     AddController addController = Get.put(AddController());
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -49,25 +50,30 @@ class ProcedureScreen extends StatelessWidget {
             const SizedBox(
               height: 20.0,
             ),
-            TextField(
-              controller: addController.procedureController,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(
-                    10.0,
+            Obx(() {
+              return TextField(
+                controller: addController.procedureController,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(
+                      10.0,
+                    ),
+                    borderSide: const BorderSide(
+                      color: kcPrimaryColor,
+                    ),
                   ),
-                  borderSide: const BorderSide(
-                    color: kcPrimaryColor,
-                  ),
+                  hintText: 'Describe the procedures to make your product',
+                  helperText: 'Keep it descriptive and easy to understand',
+                  labelText: 'Procedure',
+                  errorText: addController.validateProcedure.value == 'empty'
+                      ? 'Procedure Can\'t Be Empty'
+                      : null,
                 ),
-                hintText: 'Describe the procedures to make your product',
-                helperText: 'Keep it descriptive and easy to understand',
-                labelText: 'Procedure',
-              ),
-              textInputAction: TextInputAction.newline,
-              keyboardType: TextInputType.multiline,
-              maxLines: null,
-            ),
+                textInputAction: TextInputAction.newline,
+                keyboardType: TextInputType.multiline,
+                maxLines: null,
+              );
+            }),
             const SizedBox(
               height: 80.0,
             ),
@@ -77,7 +83,10 @@ class ProcedureScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   InkWell(
-                    onTap: () {},
+                    onTap: () {
+                      addController.procedureController.text = '';
+                      Get.to(() => const PriceScreen());
+                    },
                     child: Container(
                       margin: const EdgeInsets.all(10.0),
                       decoration: BoxDecoration(
@@ -93,7 +102,15 @@ class ProcedureScreen extends StatelessWidget {
                   ),
                   InkWell(
                     onTap: () {
-                      Get.to(() => const PriceScreen());
+                      if (addController.procedureController.text.isEmpty ||
+                          addController.procedureController.text == '') {
+                        addController.validateProcedure.value = 'empty';
+                      } else {
+                        addController.validateProcedure.value = 'filled';
+                      }
+                      if (addController.validateProcedure.value == 'filled') {
+                        Get.to(() => const PriceScreen());
+                      }
                     },
                     child: Container(
                       margin: const EdgeInsets.all(10.0),
