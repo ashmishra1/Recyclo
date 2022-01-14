@@ -9,11 +9,27 @@ enum WhyFarther { harder, smarter, selfStarter, tradingCharter }
 
 class ViewCard2 extends StatelessWidget {
   int length = 100;
-  final int index;
+
   final FavController favController = Get.find();
+
+  final String id;
+  final String caption;
+  final String tags;
+  final String procedure;
+  final String price;
+  final String photo;
+  final DateTime createdAt;
+  final DateTime updatedAt;
   ViewCard2({
     Key? key,
-    required this.index,
+    required this.id,
+    required this.caption,
+    required this.tags,
+    required this.procedure,
+    required this.price,
+    required this.photo,
+    required this.createdAt,
+    required this.updatedAt,
   }) : super(key: key);
 
   @override
@@ -35,6 +51,7 @@ class ViewCard2 extends StatelessWidget {
     return Column(
       children: [
         Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
               margin: const EdgeInsets.symmetric(
@@ -104,12 +121,12 @@ class ViewCard2 extends StatelessWidget {
               ),
             ),
             Container(
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 shape: BoxShape.rectangle,
                 image: DecorationImage(
                   fit: BoxFit.cover,
                   image: NetworkImage(
-                    'https://www.nobroker.in/blog/wp-content/uploads/2020/05/Ideas-to-Decorate-Your-Home1.png',
+                    "https://recyclo.herokuapp.com/uploads/" + photo,
                   ),
                 ),
               ),
@@ -161,17 +178,15 @@ class ViewCard2 extends StatelessWidget {
                       'damish',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    Obx(() {
-                      return Text.rich(TextSpan(
+                    Text.rich(
+                      TextSpan(
                         children: <InlineSpan>[
                           TextSpan(
-                              text: favController.myText.value.length >
-                                          length &&
+                              text: caption.length > length &&
                                       !favController.showAll.value
-                                  ? favController.myText.substring(0, length) +
-                                      "..."
-                                  : favController.myText.value),
-                          favController.myText.value.length > length
+                                  ? caption.substring(0, length) + "..."
+                                  : caption),
+                          caption.length > length
                               ? WidgetSpan(
                                   child: GestureDetector(
                                     onTap: () {
@@ -190,8 +205,8 @@ class ViewCard2 extends StatelessWidget {
                                 )
                               : const TextSpan(),
                         ],
-                      ));
-                    })
+                      ),
+                    ),
                   ]),
             ),
             const SizedBox(

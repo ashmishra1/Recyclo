@@ -6,6 +6,7 @@ import 'package:recyclo/screens/login/ui/login.dart';
 import 'package:recyclo/screens/phone_auth/ui/widgets/auth_screen.dart';
 import 'package:recyclo/screens/post/ui/post.dart';
 import 'package:recyclo/services/authentication.dart';
+import 'package:recyclo/services/network_handler.dart';
 import 'package:recyclo/utils/shared/app_colors.dart';
 import 'package:recyclo/utils/shared/ui_helpers.dart';
 
@@ -32,6 +33,7 @@ class AccountScreen extends StatelessWidget {
     final AccountController homeController = Get.put(AccountController());
     final AuthClass authClass = Get.put(AuthClass());
     ScrollController scrollController = ScrollController();
+    NetworkHandler networkHandler = NetworkHandler();
     return Scaffold(
       appBar: AppBar(
         title: const BoxText.headingThree(
@@ -197,39 +199,64 @@ class AccountScreen extends StatelessWidget {
               ],
             ),
           ),
-          StaggeredGridView.countBuilder(
-            scrollDirection: Axis.vertical,
-            controller: scrollController,
-            shrinkWrap: true,
-            padding: const EdgeInsets.all(12.0),
-            crossAxisCount: 4,
-            mainAxisSpacing: 10,
-            crossAxisSpacing: 8,
-            itemCount: imageList.length,
-            itemBuilder: (BuildContext context, int index) => InkWell(
-              onTap: () {
-                Get.to(
-                  () => PostScreen(
-                    postUrl: imageList[index],
-                  ),
-                );
-              },
-              child: Container(
-                decoration: const BoxDecoration(
-                    color: Colors.transparent,
-                    borderRadius: BorderRadius.all(Radius.circular(15))),
-                child: ClipRRect(
-                  borderRadius: const BorderRadius.all(Radius.circular(15)),
-                  child: FadeInImage.memoryNetwork(
-                    placeholder: kTransparentImage,
-                    image: imageList[index],
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-            ),
-            staggeredTileBuilder: (int index) => const StaggeredTile.fit(2),
-          ),
+          Container(
+            height: screenHeightPercentage(context, percentage: 0.5),
+            child: FutureBuilder<List>(
+                future: networkHandler.getPosts("/posts"),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    if (snapshot.data!.isEmpty) {
+                      return const Center(
+                        child: Text('No Posts'),
+                      );
+                    }
+                    return StaggeredGridView.countBuilder(
+                      scrollDirection: Axis.vertical,
+                      controller: scrollController,
+                      shrinkWrap: true,
+                      padding: const EdgeInsets.all(12.0),
+                      crossAxisCount: 4,
+                      mainAxisSpacing: 10,
+                      crossAxisSpacing: 8,
+                      itemCount: imageList.length,
+                      itemBuilder: (BuildContext context, int index) => InkWell(
+                        onTap: () {
+                          Get.to(
+                            () => PostScreen(
+                              postUrl: imageList[index],
+                            ),
+                          );
+                        },
+                        child: Container(
+                          decoration: const BoxDecoration(
+                              color: Colors.transparent,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(15))),
+                          child: ClipRRect(
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(15)),
+                            child: FadeInImage.memoryNetwork(
+                              placeholder: kTransparentImage,
+                              image: imageList[index],
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                      ),
+                      staggeredTileBuilder: (int index) =>
+                          const StaggeredTile.fit(2),
+                    );
+                  } else if (snapshot.hasError) {
+                    return Center(
+                      child: Text(snapshot.error.toString()),
+                    );
+                  } else {
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                }),
+          )
         ],
       ),
     );

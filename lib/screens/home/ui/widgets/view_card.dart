@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import 'package:recyclo/models/post.dart';
 import 'package:recyclo/screens/home/controller/home.dart';
 
 import 'package:recyclo/utils/shared/app_colors.dart';
@@ -11,11 +12,27 @@ enum WhyFarther { harder, smarter, selfStarter, tradingCharter }
 
 class ViewCard extends StatelessWidget {
   int length = 100;
-  final int index;
+
   final HomeController homeController = Get.find();
+
+  final String id;
+  final String caption;
+  final String tags;
+  final String procedure;
+  final String price;
+  final String photo;
+  final DateTime createdAt;
+  final DateTime updatedAt;
   ViewCard({
     Key? key,
-    required this.index,
+    required this.id,
+    required this.caption,
+    required this.tags,
+    required this.procedure,
+    required this.price,
+    required this.photo,
+    required this.createdAt,
+    required this.updatedAt,
   }) : super(key: key);
 
   @override
@@ -37,6 +54,7 @@ class ViewCard extends StatelessWidget {
     return Column(
       children: [
         Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
               margin: const EdgeInsets.symmetric(
@@ -82,11 +100,11 @@ class ViewCard extends StatelessWidget {
                     itemBuilder: (context) => [
                       const PopupMenuItem<int>(
                         value: 0,
-                        child: Text('Report'),
+                        child: Text('Get Procedure'),
                       ),
                       const PopupMenuItem<int>(
                         value: 1,
-                        child: Text('Hide'),
+                        child: Text('Buy'),
                       ),
                       const PopupMenuItem<int>(
                         value: 2,
@@ -106,12 +124,12 @@ class ViewCard extends StatelessWidget {
               ),
             ),
             Container(
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 shape: BoxShape.rectangle,
                 image: DecorationImage(
                   fit: BoxFit.cover,
                   image: NetworkImage(
-                    'https://www.nobroker.in/blog/wp-content/uploads/2020/05/Ideas-to-Decorate-Your-Home1.png',
+                    "https://recyclo.herokuapp.com/uploads/" + photo,
                   ),
                 ),
               ),
@@ -163,17 +181,15 @@ class ViewCard extends StatelessWidget {
                       'damish',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    Obx(() {
-                      return Text.rich(TextSpan(
+                    Text.rich(
+                      TextSpan(
                         children: <InlineSpan>[
                           TextSpan(
-                              text: homeController.myText.value.length >
-                                          length &&
+                              text: caption.length > length &&
                                       !homeController.showAll.value
-                                  ? homeController.myText.substring(0, length) +
-                                      "..."
-                                  : homeController.myText.value),
-                          homeController.myText.value.length > length
+                                  ? caption.substring(0, length) + "..."
+                                  : caption),
+                          caption.length > length
                               ? WidgetSpan(
                                   child: GestureDetector(
                                     onTap: () {
@@ -192,8 +208,8 @@ class ViewCard extends StatelessWidget {
                                 )
                               : const TextSpan(),
                         ],
-                      ));
-                    })
+                      ),
+                    ),
                   ]),
             ),
             const SizedBox(

@@ -9,7 +9,7 @@ class NetworkHandler {
   String baseUrl = "https://recyclo.herokuapp.com/api";
   var log = Logger();
 
-  Future<List> get(String url) async {
+  Future<List> getPosts(String url) async {
     url = formater(url);
     var response = await http.get(Uri.parse(url));
 
@@ -21,8 +21,10 @@ class NetworkHandler {
 
       Map map = jsonDecode(response.body);
       List posts = map["listOfPosts"];
+      List<PostModel> allPosts =
+          posts.map((json) => PostModel.fromJson(json)).toList();
 
-      print(posts.toString());
+      print(allPosts);
 
       return posts;
     } else {
@@ -30,15 +32,42 @@ class NetworkHandler {
     }
   }
 
-  Future<dynamic> post(String url, Map<String, String> body) async {
+  Future<List> explorePost(String url, Map<String, String> body) async {
     url = formater(url);
     var response = await http.post(Uri.parse(url), body: body);
     if (response.statusCode == 200 || response.statusCode == 201) {
       log.i(response.body);
-      return response;
+
+      List posts = jsonDecode(response.body);
+      List<PostModel> allPosts =
+          posts.map((json) => PostModel.fromJson(json)).toList();
+      print(posts);
+
+      return posts;
+    } else {
+      throw Exception('Failed to load posts');
     }
-    log.d(response.body);
-    log.d(response.statusCode);
+    // log.d(response.body);
+    // log.d(response.statusCode);
+  }
+
+  Future<List> searchPost(String url, Map<String, String> body) async {
+    url = formater(url);
+    var response = await http.post(Uri.parse(url), body: body);
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      log.i(response.body);
+
+      List posts = jsonDecode(response.body);
+      List<PostModel> allPosts =
+          posts.map((json) => PostModel.fromJson(json)).toList();
+      print(posts);
+
+      return posts;
+    } else {
+      throw Exception('Failed to load posts');
+    }
+    // log.d(response.body);
+    // log.d(response.statusCode);
   }
 
   Future<http.StreamedResponse> patchImage(String url, String filepath) async {
@@ -59,7 +88,7 @@ class NetworkHandler {
   }
 
   Future<int> newPost(String url, String filepath, String caption, String tags,
-      String procedure, String price) async {
+      String procedure, String price, String items) async {
     url = formater(url);
     var request = http.MultipartRequest('POST', Uri.parse(url));
     request.files.add(await http.MultipartFile.fromPath("photo", filepath));
@@ -68,6 +97,7 @@ class NetworkHandler {
       "tags": tags,
       "procedure": procedure,
       "price": price,
+      "items": items,
     });
     print("request: " + request.toString());
     var res = await request.send();

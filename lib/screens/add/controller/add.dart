@@ -14,14 +14,15 @@ class AddController extends GetxController {
   var validateCaption = ''.obs;
   var validateProcedure = ''.obs;
   var validatePrice = ''.obs;
+  var validateItems = ''.obs;
   File? imageFile;
   File? videoFile;
   File selectedFile = File('assets/image_upload.svg');
   TextEditingController priceController = TextEditingController();
   TextEditingController captionController = TextEditingController();
   TextEditingController procedureController = TextEditingController();
+  TextEditingController itemsController = TextEditingController();
   XFile? pickedFile;
-  Dio dio = Dio();
 
   ImagePicker? imagePicker;
 
@@ -43,22 +44,4 @@ class AddController extends GetxController {
     }
     update();
   }
-
-  createPost(Map<String, String> data) async {
-    final response = await dio
-        .post("https://recyclo.herokuapp.com/api/add-post", data: data);
-  }
 }
-
- // final response = await http.post(Uri.parse(
-      //     //'https://recyclo.herokuapp.com/api/add-post'
-      //     "https://recyclo.herokuapp.com/api/add-post"), body: {
-      //   "caption": name,
-      //   "procedure": 'hi',
-      //   "price": '400',
-      //   //"photo": UploadFileInfo(_image, basename(_image.path)),
-
-      //   // "title": "Ashutosh Mishra",
-      //   // "body": "Post body",
-      //   // "userId": "1",
-      // });

@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:recyclo/models/post.dart';
 import 'package:recyclo/screens/add/controller/add.dart';
 import 'package:recyclo/screens/navbar/controller/navbar.dart';
+import 'package:recyclo/screens/navbar/ui/navbar.dart';
 import 'package:recyclo/services/network_handler.dart';
 import 'package:recyclo/utils/shared/app_colors.dart';
 import 'package:recyclo/utils/shared/ui_helpers.dart';
@@ -125,6 +126,7 @@ class PriceScreen extends StatelessWidget {
                           addController.tags.join(","),
                           addController.procedureController.text,
                           addController.priceController.text,
+                          addController.itemsController.text,
                         );
 
                         if (status.toString() == '200' ||
@@ -154,6 +156,7 @@ class PriceScreen extends StatelessWidget {
                         addController.tags.value = [];
                         addController.imagePath.value = '';
                       }
+                      Get.to(() => const Navbar());
                     },
                     child: Container(
                       margin: const EdgeInsets.all(10.0),

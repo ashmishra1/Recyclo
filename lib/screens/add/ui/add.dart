@@ -21,7 +21,13 @@ class AddScreen extends StatelessWidget {
     final AddController addController = Get.put(AddController());
     NetworkHandler networkHandler = NetworkHandler();
 
-    List<String> items = ['Bottle', 'Plank', 'Tyre', 'Coir', 'Card Boards'];
+    List<String> tags = [
+      'Organic',
+      'E-waste',
+      'Metal',
+      'Household waste',
+      'Card Boards'
+    ];
 
     return Scaffold(
       appBar: AppBar(
@@ -180,7 +186,6 @@ class AddScreen extends StatelessWidget {
                       ),
                       focusColor: kcPrimaryColor,
                       hintText: 'Write something here',
-                      helperText: 'Keep it short and simple',
                       labelText: 'Caption',
                       errorText: addController.validateCaption.value == 'empty'
                           ? 'Caption Can\'t Be Empty'
@@ -191,6 +196,31 @@ class AddScreen extends StatelessWidget {
                     maxLines: null,
                   );
                 }),
+                SizedBox(
+                  height: 40.0,
+                ),
+                TextField(
+                  controller: addController.itemsController,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(
+                        10.0,
+                      ),
+                      borderSide: const BorderSide(
+                        color: kcPrimaryColor,
+                      ),
+                    ),
+                    focusColor: kcPrimaryColor,
+                    hintText: 'eg. bottle,coir,ice cream sticks,...',
+                    labelText: 'Items',
+                    errorText: addController.validateItems.value == 'empty'
+                        ? 'Items Can\'t Be Empty'
+                        : null,
+                  ),
+                  textInputAction: TextInputAction.newline,
+                  keyboardType: TextInputType.multiline,
+                  maxLines: null,
+                ),
                 const SizedBox(
                   height: 40.0,
                 ),
@@ -223,9 +253,6 @@ class AddScreen extends StatelessWidget {
                                         fontWeight: FontWeight.w700),
                                   ),
                                   onSelected: ((val) {}),
-                                  // selected:
-                                  //     applicationBloc.placeType  =='campground',
-                                  // selectedColor: Colors.blue,
                                 ),
                                 IconButton(
                                   onPressed: () {
@@ -270,27 +297,27 @@ class AddScreen extends StatelessWidget {
                             elevation: 8,
                             color: Colors.white,
                             shape: const RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10))),
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(10),
+                              ),
+                            ),
                             itemBuilder: (context) {
                               return <PopupMenuEntry<Widget>>[
                                 PopupMenuItem<Widget>(
                                   child: Container(
                                     decoration: ShapeDecoration(
-                                        color: Colors.white,
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10))),
+                                      color: Colors.white,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                    ),
                                     child: Scrollbar(
                                       child: ListView.builder(
                                         padding: const EdgeInsets.only(top: 20),
-                                        itemCount: items.length,
+                                        itemCount: tags.length,
                                         itemBuilder: (context, index) {
-                                          final trans = items[index];
-                                          return InkWell(onLongPress: () {
-                                            addController.tags
-                                                .add(items[index]);
-                                          }, child: Obx(() {
+                                          final trans = tags[index];
+                                          return InkWell(child: Obx(() {
                                             return ListTile(
                                               title: Text(
                                                 trans.toString(),
@@ -299,7 +326,9 @@ class AddScreen extends StatelessWidget {
                                                 ),
                                               ),
                                               trailing: (addController.tags
-                                                      .contains(items[index]))
+                                                      .contains(
+                                                tags[index],
+                                              ))
                                                   ? IconButton(
                                                       onPressed: () {},
                                                       icon: const Icon(
@@ -313,7 +342,9 @@ class AddScreen extends StatelessWidget {
                                                       width: 0.0,
                                                     ),
                                               onTap: () {
-                                                //what would you like to do?
+                                                addController.tags.add(
+                                                  tags[index],
+                                                );
                                               },
                                             );
                                           }));
@@ -330,12 +361,8 @@ class AddScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                const Text(
-                  '(Long-press the tags to select)',
-                  style: TextStyle(color: Colors.black26),
-                ),
                 const SizedBox(
-                  height: 60.0,
+                  height: 20.0,
                 ),
                 Container(
                   alignment: Alignment.topRight,
@@ -371,9 +398,16 @@ class AddScreen extends StatelessWidget {
                           } else {
                             addController.validateCaption.value = 'filled';
                           }
+                          if (addController.itemsController.text.isEmpty ||
+                              addController.itemsController.text == '') {
+                            addController.validateItems.value = 'empty';
+                          } else {
+                            addController.validateItems.value = 'filled';
+                          }
                           if (addController.tags.isNotEmpty &&
                               addController.validateCaption.value == 'filled' &&
-                              addController.pickedFile?.path != null) {
+                              addController.pickedFile?.path != null &&
+                              addController.validateItems.value == 'filled') {
                             Get.to(() => const ProcedureScreen());
                           } else if (addController.tags.isEmpty &&
                               addController.pickedFile?.path == null) {

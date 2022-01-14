@@ -4,11 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import 'package:recyclo/screens/fav/ui/widgets/view_card2.dart';
+import 'package:recyclo/screens/post/ui/post.dart';
 import 'package:recyclo/screens/search/controller/search.dart';
 import 'package:recyclo/screens/search/ui/widgets/image_option.dart';
+import 'package:recyclo/services/network_handler.dart';
 import 'package:recyclo/utils/shared/app_colors.dart';
+import 'package:recyclo/utils/shared/ui_helpers.dart';
 import 'package:recyclo/utils/widgets/box_input_field.dart';
 import 'package:recyclo/utils/widgets/box_text.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 class SearchScreen extends StatelessWidget {
   const SearchScreen({Key? key}) : super(key: key);
@@ -29,6 +34,8 @@ class SearchScreen extends StatelessWidget {
     searchText.addListener(() {
       searchController.getKeywords(searchText.text);
     });
+
+    NetworkHandler networkHandler = NetworkHandler();
     return Scaffold(
       appBar: AppBar(
           title: const BoxText.blackText(
@@ -302,57 +309,98 @@ class SearchScreen extends StatelessWidget {
                                 const StaggeredTile.fit(2),
                           ),
                         )
-                      : Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 20.0),
-                          height: 50.0,
-                          child: ListView.builder(
-                            shrinkWrap: true,
-                            //controller: ,
-                            scrollDirection: Axis.horizontal,
-                            itemCount: searchController.result.length,
-                            itemBuilder: (BuildContext context, int index) =>
-                                Row(
-                              children: [
-                                Container(
-                                  decoration: BoxDecoration(
-                                    color: kcPrimaryColor.withOpacity(0.1),
-                                    borderRadius: BorderRadius.circular(10.0),
-                                  ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(
-                                      left: 20.0,
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        Text(
-                                          searchController.result[index],
-                                          style: TextStyle(
-                                              color: Colors.teal.shade600,
-                                              fontSize: 16.0,
-                                              fontWeight: FontWeight.w700),
-                                        ),
-                                        IconButton(
-                                          onPressed: () {
-                                            searchController.result
-                                                .removeAt(index);
-                                          },
-                                          icon: Icon(
-                                            Icons.cancel_rounded,
-                                            color:
-                                                kcPrimaryColor.withOpacity(0.4),
+                      : Obx(() {
+                          return Container(
+                            margin:
+                                const EdgeInsets.symmetric(horizontal: 20.0),
+                            height:
+                                screenHeightPercentage(context, percentage: 1),
+                            child: FutureBuilder<List>(
+                                future: networkHandler.explorePost("/search", {
+                                  "query": searchController.result.join(',')
+                                }),
+                                builder: (context, snapshot) {
+                                  if (snapshot.hasData) {
+                                    if (snapshot.data!.isEmpty) {
+                                      return const Center(
+                                        child: Text('No Posts'),
+                                      );
+                                    }
+                                    return ListView.builder(
+                                      itemCount: snapshot.data?.length,
+                                      itemBuilder: (ctx, index) =>
+                                          // ViewCard2(
+                                          //       id: snapshot.data![index]["_id"],
+                                          //       caption: snapshot.data![index]
+                                          //           ["caption"],
+                                          //       tags: snapshot.data![index]
+                                          //           ["tags"],
+                                          //       procedure: snapshot.data![index]
+                                          //           ["procedure"],
+                                          //       price: snapshot.data![index]
+                                          //           ["price"],
+                                          //       photo: snapshot.data![index]
+                                          //           ["photo"],
+                                          //       createdAt: DateTime.parse(snapshot
+                                          //           .data![index]["createdAt"]),
+                                          //       updatedAt: DateTime.parse(snapshot
+                                          //           .data![index]["updatedAt"]),
+                                          //     )
+                                          InkWell(
+                                        onTap: () {
+                                          Get.to(() => PostScreen(
+                                                postUrl:
+                                                    "https://recyclo.herokuapp.com/uploads/" +
+                                                        snapshot.data![index]
+                                                            ["photo"],
+                                              ));
+                                        },
+                                        child: ListTile(
+                                          leading: Container(
+                                            height: 60.0,
+                                            width: 60.0,
+                                            decoration: const BoxDecoration(
+                                              color: Colors.transparent,
+                                              // borderRadius: BorderRadius.all(
+                                              //     Radius.circular(15))
+                                            ),
+                                            child: ClipRRect(
+                                              borderRadius:
+                                                  const BorderRadius.all(
+                                                      Radius.circular(50)),
+                                              child: FadeInImage.memoryNetwork(
+                                                placeholder: kTransparentImage,
+                                                image:
+                                                    "https://recyclo.herokuapp.com/uploads/" +
+                                                        snapshot.data![index]
+                                                            ["photo"],
+                                                fit: BoxFit.cover,
+                                              ),
+                                            ),
                                           ),
+                                          title: Text(
+                                            snapshot.data![index]["caption"],
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          subtitle: Text(
+                                              snapshot.data![index]["items"]),
                                         ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(
-                                  width: 10.0,
-                                )
-                              ],
-                            ),
-                          ),
-                        )
+                                      ),
+                                    );
+                                  } else if (snapshot.hasError) {
+                                    return Center(
+                                      child: Text(snapshot.error.toString()),
+                                    );
+                                  } else {
+                                    return Center(
+                                      child: CircularProgressIndicator(),
+                                    );
+                                  }
+                                }),
+                          );
+                        })
                   : const SizedBox();
             },
           ),
