@@ -7,7 +7,6 @@ import 'package:recyclo/services/firestore_database.dart';
 import 'package:recyclo/services/network_handler.dart';
 
 class FavController extends GetxController {
-  var viewPosts = <ViewCardModel>[].obs;
   final streamPosts = <PostModel>[].obs;
   NetworkHandler networkHandler = NetworkHandler();
   var response;
@@ -23,33 +22,23 @@ class FavController extends GetxController {
 
   @override
   void onInit() {
-    getPosts();
-    streamPosts.bindStream(postStream());
+    getPosts('today');
+
     super.onInit();
   }
 
-  void getPosts() {
-    viewPosts.bindStream(FirestoreDB().getPosts());
+  void getPosts(String tag) {
+    streamPosts.bindStream(refreshPage(tag));
   }
 
-  Future<List> refreshPage(String tag) async {
-    response = await networkHandler.explorePost("/explore", {'tag': tag});
-    Map map = jsonDecode(response.body);
-    List posts = map["listOfPosts"];
-    List<PostModel> allPosts =
-        posts.map((json) => PostModel.fromJson(json)).toList();
-    return allPosts;
+  Stream<List<PostModel>> refreshPage(String tag) async* {
+    await Future.delayed(const Duration(milliseconds: 500));
+    List<PostModel> someProduct =
+        await networkHandler.explorePost("/explore", {'tag': tag});
+    yield someProduct;
   }
 
   Future<void> checkImageUrl(String url) async {
     checkImage.value = await networkHandler.checkUrl(url);
-  }
-
-  Stream<List<PostModel>> postStream() async* {
-    await Future.delayed(const Duration(milliseconds: 500));
-    List<PostModel> someProduct = await networkHandler.getPosts(
-      "/posts",
-    );
-    yield someProduct;
   }
 }

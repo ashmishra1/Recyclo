@@ -37,11 +37,13 @@ class FavScreen extends StatelessWidget {
       ),
       body: Stack(children: [
         Container(
-          margin: EdgeInsets.symmetric(vertical: 60.0),
+          margin: const EdgeInsets.only(
+            top: 90.0,
+          ),
           child: Obx(
             () {
               if (favController.streamPosts.isEmpty) {
-                return const Center(child: Text('There is Nothing to Show'));
+                return const Center(child: CircularProgressIndicator());
               } else {
                 return ListView.builder(
                   scrollDirection: Axis.vertical,
@@ -57,7 +59,10 @@ class FavScreen extends StatelessWidget {
           ),
         ),
         Container(
-          margin: const EdgeInsets.symmetric(horizontal: 20.0),
+          margin: const EdgeInsets.symmetric(
+            horizontal: 20.0,
+            vertical: 20.0,
+          ),
           height: 50.0,
           child: ListView.builder(
             shrinkWrap: true,
@@ -67,29 +72,39 @@ class FavScreen extends StatelessWidget {
             itemBuilder: (BuildContext context, int index) => Row(
               children: [
                 InkWell(
-                  onTap: () {
-                    favController.selectedTag.value = tags[index];
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: kcPrimaryColor.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(15.0),
-                      child: Text(
-                        tags[index],
-                        style: TextStyle(
-                            color: Colors.teal.shade600,
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.w700),
+                    onTap: () {
+                      favController.streamPosts.value = [];
+                      favController.selectedTag.value = tags[index];
+                      favController.getPosts(tags[index]);
+                    },
+                    child: Obx(
+                      () => Container(
+                        decoration: BoxDecoration(
+                          color:
+                              (favController.selectedTag.value == tags[index])
+                                  ? null
+                                  : kcPrimaryColor.withOpacity(0.1),
+                          gradient:
+                              (favController.selectedTag.value == tags[index])
+                                  ? grad1
+                                  : null,
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(15.0),
+                          child: Text(
+                            tags[index],
+                            style: TextStyle(
+                                color: Colors.teal.shade600,
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.w700),
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                ),
+                    )),
                 const SizedBox(
                   width: 10.0,
-                )
+                ),
               ],
             ),
           ),

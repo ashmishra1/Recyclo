@@ -39,7 +39,8 @@ class NetworkHandler {
     }
   }
 
-  Future<List> explorePost(String url, Map<String, String> body) async {
+  Future<List<PostModel>> explorePost(
+      String url, Map<String, String> body) async {
     url = formater(url);
     var response = await http.post(Uri.parse(url), body: body);
     if (response.statusCode == 200 || response.statusCode == 201) {
@@ -50,7 +51,7 @@ class NetworkHandler {
           posts.map((json) => PostModel.fromJson(json)).toList();
       print(posts);
 
-      return posts;
+      return allPosts;
     } else {
       throw Exception('Failed to load posts');
     }

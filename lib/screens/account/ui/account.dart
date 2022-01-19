@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:get/get.dart';
 import 'package:recyclo/screens/account/controller/account.dart';
+import 'package:recyclo/screens/home/ui/widgets/view_card.dart';
 import 'package:recyclo/screens/login/ui/login.dart';
 import 'package:recyclo/screens/phone_auth/ui/widgets/auth_screen.dart';
 import 'package:recyclo/screens/post/ui/post.dart';
@@ -201,62 +202,107 @@ class AccountScreen extends StatelessWidget {
           ),
           Container(
             height: screenHeightPercentage(context, percentage: 0.5),
-            child: FutureBuilder<List>(
-                future: networkHandler.getPosts("/posts"),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    if (snapshot.data!.isEmpty) {
-                      return const Center(
-                        child: Text('No Posts'),
-                      );
-                    }
-                    return StaggeredGridView.countBuilder(
-                      scrollDirection: Axis.vertical,
-                      controller: scrollController,
-                      shrinkWrap: true,
-                      padding: const EdgeInsets.all(12.0),
-                      crossAxisCount: 4,
-                      mainAxisSpacing: 10,
-                      crossAxisSpacing: 8,
-                      itemCount: accountController.streamPosts.length,
-                      itemBuilder: (BuildContext context, int index) => InkWell(
-                        onTap: () {
-                          Get.to(
-                            () => PostScreen(
-                              postUrl:
-                                  accountController.streamPosts[index].photo,
-                            ),
-                          );
-                        },
-                        child: Container(
-                          decoration: const BoxDecoration(
-                              color: Colors.transparent,
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(15))),
-                          child: ClipRRect(
+
+            child: Obx(
+              () {
+                if (accountController.streamPosts.isEmpty) {
+                  return const Center(child: Text('There is Nothing to Show'));
+                } else {
+                  return StaggeredGridView.countBuilder(
+                    scrollDirection: Axis.vertical,
+                    controller: scrollController,
+                    shrinkWrap: true,
+                    padding: const EdgeInsets.all(12.0),
+                    crossAxisCount: 4,
+                    mainAxisSpacing: 10,
+                    crossAxisSpacing: 8,
+                    itemCount: accountController.streamPosts.length,
+                    itemBuilder: (BuildContext context, int index) => InkWell(
+                      onTap: () {
+                        Get.to(
+                          () => PostScreen(
+                            postUrl: accountController.streamPosts[index].photo,
+                          ),
+                        );
+                      },
+                      child: Container(
+                        decoration: const BoxDecoration(
+                            color: Colors.transparent,
                             borderRadius:
-                                const BorderRadius.all(Radius.circular(15)),
-                            child: FadeInImage.memoryNetwork(
-                              placeholder: kTransparentImage,
-                              image: accountController.streamPosts[index].photo,
-                              fit: BoxFit.cover,
-                            ),
+                                BorderRadius.all(Radius.circular(15))),
+                        child: ClipRRect(
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(15)),
+                          child: FadeInImage.memoryNetwork(
+                            placeholder: kTransparentImage,
+                            image: accountController.streamPosts[index].photo,
+                            fit: BoxFit.cover,
                           ),
                         ),
                       ),
-                      staggeredTileBuilder: (int index) =>
-                          const StaggeredTile.fit(2),
-                    );
-                  } else if (snapshot.hasError) {
-                    return Center(
-                      child: Text(snapshot.error.toString()),
-                    );
-                  } else {
-                    return Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-                }),
+                    ),
+                    staggeredTileBuilder: (int index) =>
+                        const StaggeredTile.fit(2),
+                  );
+                }
+              },
+            ),
+            // child: FutureBuilder<List>(
+            //     future: networkHandler.getPosts("/posts"),
+            //     builder: (context, snapshot) {
+            //       if (snapshot.hasData) {
+            //         if (snapshot.data!.isEmpty) {
+            //           return const Center(
+            //             child: Text('No Posts'),
+            //           );
+            //         }
+            //         return StaggeredGridView.countBuilder(
+            //           scrollDirection: Axis.vertical,
+            //           controller: scrollController,
+            //           shrinkWrap: true,
+            //           padding: const EdgeInsets.all(12.0),
+            //           crossAxisCount: 4,
+            //           mainAxisSpacing: 10,
+            //           crossAxisSpacing: 8,
+            //           itemCount: accountController.streamPosts.length,
+            //           itemBuilder: (BuildContext context, int index) => InkWell(
+            //             onTap: () {
+            //               Get.to(
+            //                 () => PostScreen(
+            //                   postUrl:
+            //                       accountController.streamPosts[index].photo,
+            //                 ),
+            //               );
+            //             },
+            //             child: Container(
+            //               decoration: const BoxDecoration(
+            //                   color: Colors.transparent,
+            //                   borderRadius:
+            //                       BorderRadius.all(Radius.circular(15))),
+            //               child: ClipRRect(
+            //                 borderRadius:
+            //                     const BorderRadius.all(Radius.circular(15)),
+            //                 child: FadeInImage.memoryNetwork(
+            //                   placeholder: kTransparentImage,
+            //                   image: accountController.streamPosts[index].photo,
+            //                   fit: BoxFit.cover,
+            //                 ),
+            //               ),
+            //             ),
+            //           ),
+            //           staggeredTileBuilder: (int index) =>
+            //               const StaggeredTile.fit(2),
+            //         );
+            //       } else if (snapshot.hasError) {
+            //         return Center(
+            //           child: Text(snapshot.error.toString()),
+            //         );
+            //       } else {
+            //         return Center(
+            //           child: CircularProgressIndicator(),
+            //         );
+            //       }
+            //     }),
           )
         ],
       ),
