@@ -349,10 +349,8 @@ class SearchScreen extends StatelessWidget {
                                           InkWell(
                                         onTap: () {
                                           Get.to(() => PostScreen(
-                                                postUrl:
-                                                    "https://recyclo.herokuapp.com/uploads/" +
-                                                        snapshot.data![index]
-                                                            ["photo"],
+                                                postUrl: snapshot.data![index]
+                                                    ["photo"],
                                               ));
                                         },
                                         child: ListTile(
@@ -370,10 +368,8 @@ class SearchScreen extends StatelessWidget {
                                                       Radius.circular(50)),
                                               child: FadeInImage.memoryNetwork(
                                                 placeholder: kTransparentImage,
-                                                image:
-                                                    "https://recyclo.herokuapp.com/uploads/" +
-                                                        snapshot.data![index]
-                                                            ["photo"],
+                                                image: snapshot.data![index]
+                                                    ["photo"],
                                                 fit: BoxFit.cover,
                                               ),
                                             ),

@@ -1,3 +1,4 @@
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -11,16 +12,27 @@ import 'package:recyclo/screens/search/ui/search.dart';
 import 'package:recyclo/utils/shared/app_colors.dart';
 
 class Navbar extends StatelessWidget {
-  const Navbar({Key? key}) : super(key: key);
+  Navbar({Key? key}) : super(key: key);
+  GlobalKey<CurvedNavigationBarState> _bottomNavigationKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
-    NavbarController controller_ = Get.put(NavbarController());
+    NavbarController navbarController = Get.put(NavbarController());
     PersistentTabController _controller;
 
     _controller = PersistentTabController(initialIndex: 0);
     return GetBuilder<NavbarController>(builder: (_) {
       return Scaffold(
+        // body: IndexedStack(
+        //   index: navbarController.tabIndex,
+        //   children: const [
+        //     HomeScreen(),
+        //     FavScreen(),
+        //     AddScreen(),
+        //     SearchScreen(),
+        //     AccountScreen(),
+        //   ],
+        // ),
         body: SafeArea(
           child: PersistentTabView(
             context,
@@ -56,6 +68,26 @@ class Navbar extends StatelessWidget {
                 .style15, // Choose the nav bar style with this property.
           ),
         ),
+        // bottomNavigationBar: CurvedNavigationBar(
+        //   index: 0,
+        //   height: 60.0,
+        //   items: const <Widget>[
+        //     Icon(Icons.home_outlined, size: 30),
+        //     Icon(Icons.receipt_long_outlined, size: 30),
+        //     Icon(Icons.add_outlined, size: 30),
+        //     Icon(Icons.search_outlined, size: 30),
+        //     Icon(Icons.person_outline, size: 30),
+        //   ],
+        //   color: Colors.white,
+        //   buttonBackgroundColor: Colors.white,
+        //   backgroundColor: Colors.grey.shade50,
+        //   animationCurve: Curves.easeInOut,
+        //   animationDuration: const Duration(milliseconds: 600),
+        //   onTap: (index) {
+        //     navbarController.tabIndex = index;
+        //   },
+        //   letIndexChange: (index) => true,
+        // ),
       );
     });
   }

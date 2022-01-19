@@ -15,45 +15,66 @@ class HomeScreen extends StatelessWidget {
     final NetworkHandler networkHandler = NetworkHandler();
 
     return Scaffold(
-        appBar: AppBar(
-          title: const BoxText.headingThree(
-            'Recyclo',
-          ),
-          backgroundColor: Colors.white,
-          elevation: 0.0,
+      appBar: AppBar(
+        title: const BoxText.headingThree(
+          'Recyclo',
         ),
-        body: FutureBuilder<List>(
-            future: networkHandler.getPosts("/posts"),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                if (snapshot.data!.isEmpty) {
-                  return const Center(
-                    child: Text('No Posts'),
-                  );
-                }
-                return ListView.builder(
-                    itemCount: snapshot.data?.length,
-                    itemBuilder: (ctx, index) => ViewCard(
-                          id: snapshot.data![index]["_id"],
-                          caption: snapshot.data![index]["caption"],
-                          tags: snapshot.data![index]["tags"],
-                          procedure: snapshot.data![index]["procedure"],
-                          price: snapshot.data![index]["price"],
-                          photo: snapshot.data![index]["photo"],
-                          createdAt: DateTime.parse(
-                              snapshot.data![index]["createdAt"]),
-                          updatedAt: DateTime.parse(
-                              snapshot.data![index]["updatedAt"]),
-                        ));
-              } else if (snapshot.hasError) {
-                return Center(
-                  child: Text(snapshot.error.toString()),
+        backgroundColor: Colors.white,
+        elevation: 0.0,
+      ),
+      body: Obx(
+        () {
+          if (homeController.streamPosts.isEmpty) {
+            return const Center(child: Text('There is Nothing to Show'));
+          } else {
+            return ListView.builder(
+              scrollDirection: Axis.vertical,
+              itemCount: homeController.streamPosts.length,
+              itemBuilder: (BuildContext context, int index) {
+                return ViewCard(
+                  post: homeController.streamPosts[index],
                 );
-              } else {
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-            }));
+              },
+            );
+          }
+        },
+      ),
+    );
   }
 }
+
+
+
+// FutureBuilder<List>(
+//             future: networkHandler.getPosts("/posts"),
+//             builder: (context, snapshot) {
+//               if (snapshot.hasData) {
+//                 if (snapshot.data!.isEmpty) {
+//                   return const Center(
+//                     child: Text('No Posts'),
+//                   );
+//                 }
+//                 return ListView.builder(
+//                     itemCount: snapshot.data?.length,
+//                     itemBuilder: (ctx, index) => ViewCard(
+//                           id: snapshot.data![index]["_id"],
+//                           caption: snapshot.data![index]["caption"],
+//                           tags: snapshot.data![index]["tags"],
+//                           procedure: snapshot.data![index]["procedure"],
+//                           price: snapshot.data![index]["price"],
+//                           photo: snapshot.data![index]["photo"],
+//                           createdAt: DateTime.parse(
+//                               snapshot.data![index]["createdAt"]),
+//                           updatedAt: DateTime.parse(
+//                               snapshot.data![index]["updatedAt"]),
+//                         ));
+//               } else if (snapshot.hasError) {
+//                 return Center(
+//                   child: Text(snapshot.error.toString()),
+//                 );
+//               } else {
+//                 return Center(
+//                   child: CircularProgressIndicator(),
+//                 );
+//               }
+//             })

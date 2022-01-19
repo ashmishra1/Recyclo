@@ -11,7 +11,7 @@ class Authentication {
 
     var user = FirebaseAuth.instance.currentUser;
     if (user != null) {
-      Get.offAll(() => const Navbar());
+      Get.offAll(() => Navbar());
     }
     return firebaseApp;
   }

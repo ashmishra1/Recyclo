@@ -9,7 +9,16 @@ class NetworkHandler {
   String baseUrl = "https://recyclo.herokuapp.com/api";
   var log = Logger();
 
-  Future<List> getPosts(String url) async {
+  Future<bool> checkUrl(String url) async {
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      return true;
+    }
+    return false;
+  }
+
+  Future<List<PostModel>> getPosts(String url) async {
     url = formater(url);
     var response = await http.get(Uri.parse(url));
 
@@ -24,9 +33,7 @@ class NetworkHandler {
       List<PostModel> allPosts =
           posts.map((json) => PostModel.fromJson(json)).toList();
 
-      print(allPosts);
-
-      return posts;
+      return allPosts;
     } else {
       throw Exception('Failed to load posts');
     }

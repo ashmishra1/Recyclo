@@ -19,7 +19,7 @@ class Login extends StatelessWidget {
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (ctx, snapshot) {
           if (snapshot.hasData) {
-            return const Navbar();
+            return Navbar();
           } else {
             return ListView(
               padding: const EdgeInsets.symmetric(

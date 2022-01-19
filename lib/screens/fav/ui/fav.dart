@@ -26,6 +26,7 @@ class FavScreen extends StatelessWidget {
     final TextEditingController textEditingController = TextEditingController();
     ScrollController scrollController = ScrollController();
     NetworkHandler networkHandler = NetworkHandler();
+
     return Scaffold(
       appBar: AppBar(
         title: const BoxText.headingThree(
@@ -35,45 +36,26 @@ class FavScreen extends StatelessWidget {
         elevation: 0.0,
       ),
       body: Stack(children: [
-        Obx(() {
-          return Container(
-            margin: EdgeInsets.symmetric(vertical: 60.0),
-            child: FutureBuilder<List>(
-                future: networkHandler.explorePost(
-                    "/explore", {"tag": favController.selectedTag.value}),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    if (snapshot.data!.isEmpty) {
-                      return const Center(
-                        child: Text('No Posts'),
-                      );
-                    }
-                    return ListView.builder(
-                        itemCount: snapshot.data?.length,
-                        itemBuilder: (ctx, index) => ViewCard2(
-                              id: snapshot.data![index]["_id"],
-                              caption: snapshot.data![index]["caption"],
-                              tags: snapshot.data![index]["tags"],
-                              procedure: snapshot.data![index]["procedure"],
-                              price: snapshot.data![index]["price"],
-                              photo: snapshot.data![index]["photo"],
-                              createdAt: DateTime.parse(
-                                  snapshot.data![index]["createdAt"]),
-                              updatedAt: DateTime.parse(
-                                  snapshot.data![index]["updatedAt"]),
-                            ));
-                  } else if (snapshot.hasError) {
-                    return Center(
-                      child: Text(snapshot.error.toString()),
+        Container(
+          margin: EdgeInsets.symmetric(vertical: 60.0),
+          child: Obx(
+            () {
+              if (favController.streamPosts.isEmpty) {
+                return const Center(child: Text('There is Nothing to Show'));
+              } else {
+                return ListView.builder(
+                  scrollDirection: Axis.vertical,
+                  itemCount: favController.streamPosts.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return ViewCard2(
+                      post: favController.streamPosts[index],
                     );
-                  } else {
-                    return Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-                }),
-          );
-        }),
+                  },
+                );
+              }
+            },
+          ),
+        ),
         Container(
           margin: const EdgeInsets.symmetric(horizontal: 20.0),
           height: 50.0,

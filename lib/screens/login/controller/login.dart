@@ -15,7 +15,7 @@ class LoginController extends GetxController {
       debugPrint(userCredential.user?.email);
       userCredential.user;
 
-      Get.offAll(() => const Navbar());
+      Get.offAll(() => Navbar());
     } catch (e) {
       Get.snackbar('Failed to Login!', e.toString(),
           snackPosition: SnackPosition.BOTTOM,
@@ -25,6 +25,6 @@ class LoginController extends GetxController {
 
   Future<void> googleSignIn() async {
     await authController.signInWithGoogle();
-    Get.offAll(() => const Navbar());
+    Get.offAll(() => Navbar());
   }
 }

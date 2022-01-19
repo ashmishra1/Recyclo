@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:recyclo/models/post.dart';
 import 'package:recyclo/screens/home/controller/home.dart';
+import 'package:recyclo/services/network_handler.dart';
 
 import 'package:recyclo/utils/shared/app_colors.dart';
 import 'package:recyclo/utils/widgets/box_text.dart';
@@ -15,24 +16,10 @@ class ViewCard extends StatelessWidget {
 
   final HomeController homeController = Get.find();
 
-  final String id;
-  final String caption;
-  final String tags;
-  final String procedure;
-  final String price;
-  final String photo;
-  final DateTime createdAt;
-  final DateTime updatedAt;
+  PostModel post;
   ViewCard({
     Key? key,
-    required this.id,
-    required this.caption,
-    required this.tags,
-    required this.procedure,
-    required this.price,
-    required this.photo,
-    required this.createdAt,
-    required this.updatedAt,
+    required this.post,
   }) : super(key: key);
 
   @override
@@ -50,6 +37,8 @@ class ViewCard extends StatelessWidget {
           break;
       }
     }
+
+    homeController.checkImageUrl(post.photo);
 
     return Column(
       children: [
@@ -123,18 +112,31 @@ class ViewCard extends StatelessWidget {
                 ],
               ),
             ),
-            Container(
-              decoration: BoxDecoration(
-                shape: BoxShape.rectangle,
-                image: DecorationImage(
-                  fit: BoxFit.cover,
-                  image: NetworkImage(
-                    "https://recyclo.herokuapp.com/uploads/" + photo,
-                  ),
-                ),
-              ),
-              width: double.infinity,
-              height: 400.0,
+            Obx(
+              () => (homeController.checkImage.value == true)
+                  ? Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.rectangle,
+                        image: DecorationImage(
+                          fit: BoxFit.cover,
+                          image: NetworkImage(
+                            post.photo,
+                          ),
+                        ),
+                      ),
+                      width: double.infinity,
+                      height: 400.0,
+                    )
+                  : Container(
+                      child: const Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.rectangle,
+                      ),
+                      width: double.infinity,
+                      height: 400.0,
+                    ),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -185,11 +187,11 @@ class ViewCard extends StatelessWidget {
                       TextSpan(
                         children: <InlineSpan>[
                           TextSpan(
-                              text: caption.length > length &&
+                              text: post.caption.length > length &&
                                       !homeController.showAll.value
-                                  ? caption.substring(0, length) + "..."
-                                  : caption),
-                          caption.length > length
+                                  ? post.caption.substring(0, length) + "..."
+                                  : post.caption),
+                          post.caption.length > length
                               ? WidgetSpan(
                                   child: GestureDetector(
                                     onTap: () {

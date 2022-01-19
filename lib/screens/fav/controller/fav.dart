@@ -8,9 +8,12 @@ import 'package:recyclo/services/network_handler.dart';
 
 class FavController extends GetxController {
   var viewPosts = <ViewCardModel>[].obs;
+  final streamPosts = <PostModel>[].obs;
   NetworkHandler networkHandler = NetworkHandler();
   var response;
   var selectedTag = 'today'.obs;
+  var checkImage = true.obs;
+  var imageUrl = "".obs;
 
   var selection = ''.obs;
   var myText =
@@ -21,6 +24,7 @@ class FavController extends GetxController {
   @override
   void onInit() {
     getPosts();
+    streamPosts.bindStream(postStream());
     super.onInit();
   }
 
@@ -35,5 +39,17 @@ class FavController extends GetxController {
     List<PostModel> allPosts =
         posts.map((json) => PostModel.fromJson(json)).toList();
     return allPosts;
+  }
+
+  Future<void> checkImageUrl(String url) async {
+    checkImage.value = await networkHandler.checkUrl(url);
+  }
+
+  Stream<List<PostModel>> postStream() async* {
+    await Future.delayed(const Duration(milliseconds: 500));
+    List<PostModel> someProduct = await networkHandler.getPosts(
+      "/posts",
+    );
+    yield someProduct;
   }
 }

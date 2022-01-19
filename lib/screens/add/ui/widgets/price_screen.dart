@@ -156,7 +156,7 @@ class PriceScreen extends StatelessWidget {
                         addController.tags.value = [];
                         addController.imagePath.value = '';
                       }
-                      Get.to(() => const Navbar());
+                      Get.to(() => Navbar());
                     },
                     child: Container(
                       margin: const EdgeInsets.all(10.0),

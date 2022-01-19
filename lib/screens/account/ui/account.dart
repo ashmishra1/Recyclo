@@ -30,7 +30,7 @@ class AccountScreen extends StatelessWidget {
       'https://images.unsplash.com/photo-1536849187706-3dbe94687839?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
       'https://images.unsplash.com/photo-1459749411175-04bf5292ceea?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80',
     ];
-    final AccountController homeController = Get.put(AccountController());
+    final AccountController accountController = Get.put(AccountController());
     final AuthClass authClass = Get.put(AuthClass());
     ScrollController scrollController = ScrollController();
     NetworkHandler networkHandler = NetworkHandler();
@@ -218,12 +218,13 @@ class AccountScreen extends StatelessWidget {
                       crossAxisCount: 4,
                       mainAxisSpacing: 10,
                       crossAxisSpacing: 8,
-                      itemCount: imageList.length,
+                      itemCount: accountController.streamPosts.length,
                       itemBuilder: (BuildContext context, int index) => InkWell(
                         onTap: () {
                           Get.to(
                             () => PostScreen(
-                              postUrl: imageList[index],
+                              postUrl:
+                                  accountController.streamPosts[index].photo,
                             ),
                           );
                         },
@@ -237,7 +238,7 @@ class AccountScreen extends StatelessWidget {
                                 const BorderRadius.all(Radius.circular(15)),
                             child: FadeInImage.memoryNetwork(
                               placeholder: kTransparentImage,
-                              image: imageList[index],
+                              image: accountController.streamPosts[index].photo,
                               fit: BoxFit.cover,
                             ),
                           ),

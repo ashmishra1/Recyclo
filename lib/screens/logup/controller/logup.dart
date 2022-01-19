@@ -20,7 +20,7 @@ class LogupController extends GetxController {
       User? user = userCredential.user;
       authController.firebaseData(user);
 
-      Get.offAll(() => const Navbar());
+      Get.offAll(() => Navbar());
     } catch (e) {
       Get.snackbar(
         'Failed to Sign Up',
