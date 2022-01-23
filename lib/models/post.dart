@@ -6,6 +6,7 @@ class PostModel {
   final String id;
   final String caption;
   final String tags;
+  final String items;
   final String procedure;
   final String price;
   final String photo;
@@ -16,6 +17,7 @@ class PostModel {
     required this.id,
     required this.caption,
     required this.tags,
+    required this.items,
     required this.procedure,
     required this.price,
     required this.photo,
@@ -28,6 +30,7 @@ class PostModel {
         id: json["_id"],
         caption: json["caption"],
         tags: json["tags"],
+        items: json["items"],
         procedure: json["procedure"],
         price: json["price"],
         photo: json["photo"],
@@ -40,6 +43,7 @@ class PostModel {
         "_id": id,
         "caption": caption,
         "tags": tags,
+        "items": items,
         "procedure": procedure,
         "price": price,
         "photo": photo,

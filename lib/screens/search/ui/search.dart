@@ -83,25 +83,75 @@ class SearchScreen extends StatelessWidget {
                       horizontal: 20.0,
                       vertical: 20.0,
                     ),
-                    child: BoxInputField(
-                      controller: searchText,
-                      placeholder: 'Search',
-                      leading: IconButton(
-                        onPressed: () {},
-                        icon: const Icon(
-                          Icons.search,
-                          color: kcLightGreyColor,
+                    child: Column(
+                      children: [
+                        BoxInputField(
+                          controller: searchText,
+                          placeholder: 'Search',
+                          leading: IconButton(
+                            onPressed: () {},
+                            icon: const Icon(
+                              Icons.search,
+                              color: kcLightGreyColor,
+                            ),
+                          ),
+                          trailing: IconButton(
+                            onPressed: () {
+                              searchController.searchImage.value = true;
+                            },
+                            icon: const Icon(
+                              Icons.image,
+                              color: kcLightGreyColor,
+                            ),
+                          ),
                         ),
-                      ),
-                      trailing: IconButton(
-                        onPressed: () {
-                          searchController.searchImage.value = true;
-                        },
-                        icon: const Icon(
-                          Icons.image,
-                          color: kcLightGreyColor,
-                        ),
-                      ),
+                        (searchController.result.isNotEmpty ||
+                                searchController.searchImage.value == true)
+                            ? Container(
+                                margin: const EdgeInsets.symmetric(
+                                    horizontal: 10.0),
+                                child: StaggeredGridView.countBuilder(
+                                  scrollDirection: Axis.vertical,
+                                  controller: scrollController,
+                                  shrinkWrap: true,
+                                  padding: const EdgeInsets.all(12.0),
+                                  crossAxisCount: 4,
+                                  mainAxisSpacing: 10,
+                                  crossAxisSpacing: 8,
+                                  itemCount: searchController.result.length,
+                                  itemBuilder:
+                                      (BuildContext context, int index) => Card(
+                                    color: kcPrimaryColor.withOpacity(0.1),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    elevation: 0.0,
+                                    child: ListTile(
+                                      title: Text(
+                                        searchController.result[index],
+                                        style: TextStyle(
+                                            color: Colors.teal.shade600,
+                                            fontSize: 16.0,
+                                            fontWeight: FontWeight.w700),
+                                      ),
+                                      trailing: IconButton(
+                                          onPressed: () {
+                                            searchController.result
+                                                .removeAt(index);
+                                          },
+                                          icon: Icon(
+                                            Icons.cancel_rounded,
+                                            color:
+                                                kcPrimaryColor.withOpacity(0.4),
+                                          )),
+                                    ),
+                                  ),
+                                  staggeredTileBuilder: (int index) =>
+                                      const StaggeredTile.fit(2),
+                                ),
+                              )
+                            : SizedBox(),
+                      ],
                     ),
                   )
                 : const SizedBox(
@@ -268,135 +318,74 @@ class SearchScreen extends StatelessWidget {
           Obx(
             () {
               return (searchController.result.isNotEmpty)
-                  ? (searchController.searchImage.isTrue)
-                      ? Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 10.0),
-                          child: StaggeredGridView.countBuilder(
-                            scrollDirection: Axis.vertical,
-                            controller: scrollController,
-                            shrinkWrap: true,
-                            padding: const EdgeInsets.all(12.0),
-                            crossAxisCount: 4,
-                            mainAxisSpacing: 10,
-                            crossAxisSpacing: 8,
-                            itemCount: searchController.result.length,
-                            itemBuilder: (BuildContext context, int index) =>
-                                Card(
-                              color: kcPrimaryColor.withOpacity(0.1),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              elevation: 0.0,
-                              child: ListTile(
-                                title: Text(
-                                  searchController.result[index],
-                                  style: TextStyle(
-                                      color: Colors.teal.shade600,
-                                      fontSize: 16.0,
-                                      fontWeight: FontWeight.w700),
-                                ),
-                                trailing: IconButton(
-                                    onPressed: () {
-                                      searchController.result.removeAt(index);
+                  ? Obx(() {
+                      return Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 20.0),
+                        height:
+                            screenHeightPercentage(context, percentage: 0.7),
+                        child: FutureBuilder<List>(
+                            future: networkHandler.searchPost("/search",
+                                {"query": searchController.result.join(',')}),
+                            builder: (context, snapshot) {
+                              if (snapshot.hasData) {
+                                if (snapshot.data!.isEmpty) {
+                                  return const Center(
+                                    child: Text('No Posts'),
+                                  );
+                                }
+                                return ListView.builder(
+                                  controller: scrollController,
+                                  itemCount: snapshot.data?.length,
+                                  itemBuilder: (ctx, index) => InkWell(
+                                    onTap: () {
+                                      Get.to(() => PostScreen(
+                                            postUrl: snapshot.data![index]
+                                                ["photo"],
+                                          ));
                                     },
-                                    icon: Icon(
-                                      Icons.cancel_rounded,
-                                      color: kcPrimaryColor.withOpacity(0.4),
-                                    )),
-                              ),
-                            ),
-                            staggeredTileBuilder: (int index) =>
-                                const StaggeredTile.fit(2),
-                          ),
-                        )
-                      : Obx(() {
-                          return Container(
-                            margin:
-                                const EdgeInsets.symmetric(horizontal: 20.0),
-                            height:
-                                screenHeightPercentage(context, percentage: 1),
-                            child: FutureBuilder<List>(
-                                future: networkHandler.explorePost("/search", {
-                                  "query": searchController.result.join(',')
-                                }),
-                                builder: (context, snapshot) {
-                                  if (snapshot.hasData) {
-                                    if (snapshot.data!.isEmpty) {
-                                      return const Center(
-                                        child: Text('No Posts'),
-                                      );
-                                    }
-                                    return ListView.builder(
-                                      itemCount: snapshot.data?.length,
-                                      itemBuilder: (ctx, index) =>
-                                          // ViewCard2(
-                                          //       id: snapshot.data![index]["_id"],
-                                          //       caption: snapshot.data![index]
-                                          //           ["caption"],
-                                          //       tags: snapshot.data![index]
-                                          //           ["tags"],
-                                          //       procedure: snapshot.data![index]
-                                          //           ["procedure"],
-                                          //       price: snapshot.data![index]
-                                          //           ["price"],
-                                          //       photo: snapshot.data![index]
-                                          //           ["photo"],
-                                          //       createdAt: DateTime.parse(snapshot
-                                          //           .data![index]["createdAt"]),
-                                          //       updatedAt: DateTime.parse(snapshot
-                                          //           .data![index]["updatedAt"]),
-                                          //     )
-                                          InkWell(
-                                        onTap: () {
-                                          Get.to(() => PostScreen(
-                                                postUrl: snapshot.data![index]
-                                                    ["photo"],
-                                              ));
-                                        },
-                                        child: ListTile(
-                                          leading: Container(
-                                            height: 60.0,
-                                            width: 60.0,
-                                            decoration: const BoxDecoration(
-                                              color: Colors.transparent,
-                                              // borderRadius: BorderRadius.all(
-                                              //     Radius.circular(15))
-                                            ),
-                                            child: ClipRRect(
-                                              borderRadius:
-                                                  const BorderRadius.all(
-                                                      Radius.circular(50)),
-                                              child: FadeInImage.memoryNetwork(
-                                                placeholder: kTransparentImage,
-                                                image: snapshot.data![index]
-                                                    ["photo"],
-                                                fit: BoxFit.cover,
-                                              ),
-                                            ),
+                                    child: ListTile(
+                                      leading: Container(
+                                        height: 60.0,
+                                        width: 60.0,
+                                        decoration: const BoxDecoration(
+                                          color: Colors.transparent,
+                                          // borderRadius: BorderRadius.all(
+                                          //     Radius.circular(15))
+                                        ),
+                                        child: ClipRRect(
+                                          borderRadius: const BorderRadius.all(
+                                              Radius.circular(50)),
+                                          child: FadeInImage.memoryNetwork(
+                                            placeholder: kTransparentImage,
+                                            image: snapshot.data![index]
+                                                ["photo"],
+                                            fit: BoxFit.cover,
                                           ),
-                                          title: Text(
-                                            snapshot.data![index]["caption"],
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          subtitle: Text(
-                                              snapshot.data![index]["items"]),
                                         ),
                                       ),
-                                    );
-                                  } else if (snapshot.hasError) {
-                                    return Center(
-                                      child: Text(snapshot.error.toString()),
-                                    );
-                                  } else {
-                                    return Center(
-                                      child: CircularProgressIndicator(),
-                                    );
-                                  }
-                                }),
-                          );
-                        })
+                                      title: Text(
+                                        snapshot.data![index]["caption"],
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      subtitle:
+                                          Text(snapshot.data![index]["items"]),
+                                    ),
+                                  ),
+                                );
+                              } else if (snapshot.hasError) {
+                                return Center(
+                                  child: Text(snapshot.error.toString()),
+                                );
+                              } else {
+                                return Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              }
+                            }),
+                      );
+                    })
                   : const SizedBox();
             },
           ),

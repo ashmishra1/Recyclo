@@ -1,5 +1,8 @@
 import 'package:get/get.dart';
+import 'package:http/http.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:recyclo/models/post.dart';
+import 'package:recyclo/services/network_handler.dart';
 import 'package:tflite/tflite.dart';
 
 class SearchController extends GetxController {
@@ -11,6 +14,8 @@ class SearchController extends GetxController {
   final imageUrl = ''.obs;
   var isLoading = false.obs;
   var searchImage = false.obs;
+  NetworkHandler networkHandler = Get.put(NetworkHandler());
+  final streamResult = <PostModel>[].obs;
 
   void selectImage(ImageSource imageSource) async {
     final _pickedFile = await _picker.pickImage(source: imageSource);
@@ -73,11 +78,23 @@ class SearchController extends GetxController {
   void getKeywords(String keywords) {
     if (keywords != '') {
       result.value = keywords.split(",");
+      print(result);
     }
   }
 
   void refreshdata() {
     result.value = [];
     imagePath.value = '';
+  }
+
+  void getResults() {
+    streamResult.bindStream(postStream());
+  }
+
+  Stream<List<PostModel>> postStream() async* {
+    //await Future.delayed(const Duration(milliseconds: 500));
+    List<PostModel> someProduct = await networkHandler
+        .explorePost("/search", {"query": result.join(',')});
+    yield someProduct;
   }
 }

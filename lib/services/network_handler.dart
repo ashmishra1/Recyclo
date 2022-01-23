@@ -55,8 +55,6 @@ class NetworkHandler {
     } else {
       throw Exception('Failed to load posts');
     }
-    // log.d(response.body);
-    // log.d(response.statusCode);
   }
 
   Future<List> searchPost(String url, Map<String, String> body) async {
@@ -74,8 +72,6 @@ class NetworkHandler {
     } else {
       throw Exception('Failed to load posts');
     }
-    // log.d(response.body);
-    // log.d(response.statusCode);
   }
 
   Future<http.StreamedResponse> patchImage(String url, String filepath) async {
